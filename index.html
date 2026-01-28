@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Axborot Xavfsizligi va MBBT - Test</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --bg: #f4f7f6; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; }
+        .container { max-width: 650px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); font-size: 24px; margin-bottom: 5px; }
+        .desc { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 30px; }
+        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #eee; border-radius: 12px; }
+        .question-text { font-weight: 700; font-size: 18px; color: #333; margin-bottom: 15px; display: block; }
+        .options { list-style: none; padding: 0; margin: 0; }
+        .options li { margin-bottom: 12px; }
+        .options input[type="radio"] { display: none; }
+        .options label { display: block; padding: 14px 18px; background: #fff; border: 2px solid #f0f0f0; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 16px; }
+        .options input[type="radio"]:checked + label { background: #eef7ff; border-color: var(--secondary); color: var(--secondary); font-weight: 600; }
+        #submit-btn { width: 100%; padding: 18px; background: var(--success); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        #submit-btn:active { transform: scale(0.98); opacity: 0.9; }
+        #result-box { display: none; text-align: center; padding: 40px 20px; }
+        .score-circle { width: 150px; height: 150px; border-radius: 50%; border: 10px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 20px auto; font-size: 32px; font-weight: 800; color: var(--success); }
+        .reload-btn { padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-wrapper">
+        <h1>Axborot Xavfsizligi</h1>
+        <p class="desc">Oraliq nazorat testi (25 ta savol)</p>
+        <div id="quiz-content"></div>
+        <button id="submit-btn" onclick="showResults()">Testni yakunlash</button>
+    </div>
+
+    <div id="result-box">
+        <h2>Sizning natijangiz:</h2>
+        <div class="score-circle" id="score-text">0/25</div>
+        <p id="percentage-text" style="font-size: 18px; margin-bottom: 25px;"></p>
+        <button class="reload-btn" onclick="location.reload()">Qayta topshirish</button>
+    </div>
+</div>
+
+<script>
+// Barcha 25 ta savol shu yerda
+var questions = [
+    { q: "Vaqt asosida ko'r-ko'rona SQL in'ektsiyasi nima?", a: "Bu to'liq 'ko'r-ko'rona' inyeksiya bo'lib, unda so'rovda quyi so'rov kiritiladi va tizim ishini bir muncha to'xtatib turadi.", b: "Xatoliklar asosida bazadan ma'lumotlarni o'g'irlash usuli.", c: "Faqatgina ma'lumotlar bazasi parolini buzib kirish texnikasi." },
+    { q: "SQL tilida vazifalar va protseduralarni bajarish uchun ruxsat qaysi buyruq bilan ko'rsatiladi?", a: "EXECUTE", b: "RUN_PROCEDURE", c: "START_TASK" },
+    { q: "Fayl serveri modeli nima?", a: "Eng sodda model bo'lib, lokal tarmoqdagi komponentlarning o'zaro aloqasining umumiy usulini xarakterlaydi.", b: "Barcha hisob-kitoblar serverda bajariladigan bulutli tizim.", c: "Faqatgina FTP protokoli orqali ishlaydigan tizim." },
+    { q: "SQL Server MBda INSERT buyrug'ining vazifasi nima?", a: "Jadvalga ma'lumotlarni qo'shish huquqi/imkoniyati.", b: "Jadval strukturasini o'chirish huquqi.", c: "Mavjud ma'lumotlarni filtrlash imkoniyati." },
+    { q: "SQL Server MBda UPDATE buyrug'ining vazifasi nima?", a: "Mavjud ma'lumotlarni yangilash huquqi/imkoniyati.", b: "Baza o'lchamini kengaytirish.", c: "Barcha foydalanuvchilarni bloklash." },
+    { q: "Ma'lumotlar bazasi serveri modeli nima?", a: "PDA-modelining rivoji bo'lib, saqlanuvchi muolajalar uning o'zagi hisoblanadi.", b: "Faqat arxivlash uchun tizim.", c: "Klient kompyuterida barcha amallar bajariladigan model." },
+    { q: "Axborot tizimlari xavfsizligining auditi nechta qismga bo'linadi?", a: "3 qismga.", b: "5 qismga.", c: "2 qismga." },
+    { q: "Taqsimlangan MBBT nima?", a: "Taqsimlangan ma'lumotlar bazasini boshqarishni va shaffoflikni ta'minlovchi dasturiy tizim.", b: "Faqat bitta serverda ishlaydigan MBBT.", c: "Offline rejimda saqlovchi tizim." },
+    { q: "Ma'lumotlar ombori (Data Warehouse) komponentalari qaysilar?", a: "Saqlanayotgan ma'lumotlar, qayta ishlash va boshqaruvchi dasturlar.", b: "Monitor, protsessor va tezkor xotira.", c: "SQL kodlari va Excel fayllari." },
+    { q: "“Ma'lumotlar bazasini himoyalash” deganda nima tushuniladi?", a: "Ruxsatsiz foydalanishdan, o'zgartirilishidan va xatolardan ogohlantirish hamda himoyalash.", b: "Kompyuterni jismoniy qulflash.", c: "Faqat diskka yozib qo'yish." },
+    { q: "ORACLE MBBTda CONNECT operatorining to'g'ri sintaksisi?", a: "CONNECT foydalanuvchi [parol] [@ma'lumotlar_bazasi]", b: "LOGIN user password database", c: "OPEN CONNECTION user_pass" },
+    { q: "Tranzaksiya – bu...", a: "Ma'lumotlar bazasining joriy holatiga nisbatan alohida ma'noli qiymatga ega amallarning ketma-ket majmui.", b: "Banklararo pul o'tkazmasi.", c: "MBni qayta o'rnatish." },
+    { q: "MBBTda axborot xavfsizligining 3 asosiy jihati?", a: "Konfidentsiallik, butunlik va foydalanuvchanlik.", b: "Tezlik, xotira va dizayn.", c: "Kirish, chiqish va o'chirish." },
+    { q: "Rollar iyerarxiyasi qaysi elementlardan tashkil topadi?", a: "Imkoniyatlar, guruhlar va birlashuvlar.", b: "Direktor, ma'mur va talaba.", c: "SQL, Java va Python." },
+    { q: "Havij dasturi nima uchun qo'llaniladi?", a: "SQLi hujumlarini avtomatlashtirish uchun.", b: "MBni grafik tahrirlash uchun.", c: "Xatoliklarni tuzatish uchun." },
+    { q: "Taqsimlangan tizimlarda yaxlitlikni ta'minlashda nechta yondashuv mavjud?", a: "2 ta.", b: "5 ta.", c: "10 ta." },
+    { q: "Foydalanuvchining ma'lum amallarni bajarish huquqi nima?", a: "Vakolat (Privilege).", b: "Identifikatsiya.", c: "Sertifikatsiya." },
+    { q: "SQL Serverdagi “processadmin” roli vazifasi?", a: "Ishlayotgan jarayonlarni (process) majburiy yakunlash huquqini beradi.", b: "Ma'lumotlarni o'chirish.", c: "Dastur o'rnatish." },
+    { q: "Bell-LaPadula modelida nechta asosiy cheklash mavjud?", a: "2 ta (Simple Security Property va *-Property).", b: "4 ta.", c: "Cheklovlar yo'q." },
+    { q: "Ma'lumotlar xavfsizligi nima?", a: "Ma'lumotlarni xavfdan, maxfiylik buzilishidan yoki yo'qolishidan himoyalash.", b: "Barchaga ochiq qilish.", c: "Faqat qog'ozda saqlash." },
+    { q: "MBBTda foydalanuvchini identifikatsiyalash buyrug'i?", a: "CONNECT.", b: "HELLO.", c: "WHOAMI." },
+    { q: "SQL Serverda “dbcreator” rolining vazifasi?", a: "MBni yaratish, o'zgartirish, o'chirish va tiklash imkonini beradi.", b: "Yangi foydalanuvchi yaratadi.", c: "Serverni qayta yuklaydi." },
+    { q: "MBBT turlari qaysilar?", a: "Iyerarxik, Tarmoqli va Relyatsion.", b: "Oson va Murakkab.", c: "Birlamchi va Ikkilamchi." },
+    { q: "IS himoyasini loyihalash bosqichlari?", a: "Xavf tahlili, siyosatni amalga oshirish va qo'llab-quvvatlash.", b: "Kod yozish va natijani kutish.", c: "Sotib olish va ishlatish." },
+    { q: "To'liq nusxalash (Full backup) nima?", a: "Barcha ma'lumotlarning butunligini o'zgarishsiz holda nusxalash.", b: "Faqat bugun o'zgargan qismi.", c: "Faqat bitta jadval." }
+];
+
+function initQuiz() {
+    var container = document.getElementById('quiz-content');
+    var html = "";
+    for (var i = 0; i < questions.length; i++) {
+        var q = questions[i];
+        var opts = [
+            { t: q.a, v: 1 }, { t: q.b, v: 0 }, { t: q.c, v: 0 }
+        ].sort(function() { return 0.5 - Math.random() });
+
+        html += '<div class="question-card"><span class="question-text">' + (i + 1) + '. ' + q.q + '</span><div class="options">';
+        for (var j = 0; j < opts.length; j++) {
+            var id = 'q' + i + '_' + j;
+            html += '<input type="radio" name="q' + i + '" id="' + id + '" value="' + opts[j].v + '">';
+            html += '<label for="' + id + '">' + opts[j].t + '</label>';
+        }
+        html += '</div></div>';
+    }
+    container.innerHTML = html;
+}
+
+function showResults() {
+    var score = 0;
+    for (var i = 0; i < questions.length; i++) {
+        var radios = document.getElementsByName('q' + i);
+        for (var j = 0; j < radios.length; j++) {
+            if (radios[j].checked && radios[j].value == "1") score++;
+        }
+    }
+    document.getElementById('quiz-wrapper').style.display = 'none';
+    document.getElementById('result-box').style.display = 'block';
+    document.getElementById('score-text').innerText = score + " / " + questions.length;
+    document.getElementById('percentage-text').innerText = "To'g'ri javoblar: " + Math.round((score/questions.length)*100) + "%";
+    window.scrollTo(0,0);
+}
+window.onload = initQuiz;
+</script>
+</body>
+</html>
