@@ -35,119 +35,119 @@
     <div class="container">
         <h1>MBBT Xavfsizligi Nazorat Testi (100 ta savol)</h1>
         <div id="questions-container"></div>
-        <button id="finish-btn" onclick="calculateResult()">TESTNI YAKUNLASH VA NATIJANI KO'RISH</button>
+        <button id="finish-btn" onclick="calculateResult()">TESTNI YAKUNLASH</button>
     </div>
 </div>
 
 <div class="container" id="res-box">
-    <h2>Sizning natijangiz:</h2>
+    <h2>Natijangiz:</h2>
     <div class="score-val" id="score-display">0 / 100</div>
     <p id="percent-display" style="font-size: 20px; font-weight: bold;"></p>
     <button onclick="location.reload()" style="padding: 12px 25px; cursor: pointer; border-radius: 8px; border: none; background: #eee; font-weight: bold;">Qayta topshirish</button>
 </div>
 
 <script>
-const quizData = [
+const rawData = [
     { q: "Vaqt asosida ko‘r-ko‘rona SQL in'ektsiyasi nima?", a: "MBBT ishini bir muncha to‘xtatib turadigan (SLEEP() yoki BENCHMARK()) inyeksiya turi", b: "Ma'lumotlarni o'chirib yuboruvchi tezkor so'rov", c: "Faqat tunda ishlaydigan skript", ans: 0 },
     { q: "SQL inyeksiyaning nechta asosiy sinfi mavjud?", a: "2 ta", b: "3 ta (In-band, Inferential/Blind, Out-of-band)", c: "5 ta", ans: 1 },
     { q: "Rollar iyerarxiyasi qaysi elementlardan tashkil topadi?", a: "Imkoniyatlar (Privileges), guruhlar va birlashuvlar", b: "Faqat login va parol", c: "Jadvallar va ustunlar", ans: 0 },
-    { q: "MBBTning ma’lumotlarni kiritish interfeysi nima qiladi?", a: "Ma’lumotlar bankining kirish yo‘li axborot tilini amalga oshiradi", b: "Faqat xatolarni ko'rsatadi", c: "Ma'lumotlarni shifrlaydi", ans: 0 },
+    { q: "MBBTning ma’lumotlarni kiritish interfeysi nima qiladi?", a: "Faqat xatolarni ko'rsatadi", b: "Ma’lumotlar bankining kirish yo‘li axborot tilini amalga oshiradi", c: "Ma'lumotlarni shifrlaydi", ans: 1 },
     { q: "Ma’lumotlar ombori (Data Warehouse) komponentalari qaysilar?", a: "Saqlanayotgan ma’lumotlar, qayta ishlash va boshqaruvchi dasturlar", b: "Faqat qattiq disk va operativ xotira", c: "Monitor va klaviatura", ans: 0 },
-    { q: "Axborot tizimi himoyasini loyihalash bosqichlari?", a: "Xavfni tahlil qilish, siyosatni amalga oshirish va madadlash", b: "Sotib olish, o'rnatish va o'chirish", c: "Faqat parol qo'yish", ans: 0 },
-    { q: "MBBT foydalanuvchisini nechta asosiy qismga bo‘lish mumkin?", a: "2 qism", b: "3 qism (Administrator, Klient, Oxirgi foydalanuvchi)", c: "5 qism", ans: 1 },
-    { q: "T.ATTACK (Aniqlanmagan tajovuz) nima?", a: "Vakolat doirasiga kirmagan harakatlarni bajarishga urinish", b: "Tizimning to'satdan o'chib qolishi", c: "Internet tezligining pasayishi", ans: 0 },
-    { q: "ORACLE MBBTda CONNECT operatorining to‘g‘ri sintaksisi?", a: "CONNECT foydalanuvchi [parol] [@ma’lumotlar_bazasi]", b: "CONNECT TO DATABASE user_pass", c: "LOGIN user password", ans: 0 },
+    { q: "Axborot tizimi himoyasini loyihalash bosqichlari?", a: "Sotib olish, o'rnatish va o'chirish", b: "Faqat parol qo'yish", c: "Xavfni tahlil qilish, siyosatni amalga oshirish va madadlash", ans: 2 },
+    { q: "MBBT foydalanuvchisini nechta asosiy qismga bo‘lish mumkin?", a: "2 qism", b: "5 qism", c: "3 qism (Administrator, Klient, Oxirgi foydalanuvchi)", ans: 2 },
+    { q: "T.ATTACK (Aniqlanmagan tajovuz) nima?", a: "Tizimning to'satdan o'chib qolishi", b: "Vakolat doirasiga kirmagan harakatlarni bajarishga urinish", c: "Internet tezligining pasayishi", ans: 1 },
+    { q: "ORACLE MBBTda CONNECT operatorining to‘g‘ri sintaksisi?", a: "CONNECT TO DATABASE user_pass", b: "CONNECT foydalanuvchi [parol] [@ma’lumotlar_bazasi]", c: "LOGIN user password", ans: 1 },
     { q: "Ma’lumotlardan masofadan foydalanish modeli nima uchun kerak?", a: "Resurslarni turli qurilmalar bo‘yicha tarqatish uchun", b: "Faqat Wi-Fi orqali ulanish uchun", c: "Ma'lumotlarni o'chirish uchun", ans: 0 },
-    { q: "SQL Server MBda UPDATE buyrug‘i vazifasi nima?", a: "Yangi jadval yaratish", b: "Ma’lumotlarni yangilash huquqi", c: "Ma'lumotlarni o'chirish", ans: 1 },
-    { q: "Ma’lumotlar bazasi serveri modeli (PDA-model rivoji) nima?", a: "Qoidalar va muolajalar serverning o‘zida saqlanadi va bajariladi", b: "Faqat fayllarni saqlash", c: "Mijozning kompyuterida hisoblash", ans: 0 },
-    { q: "Taqsimlangan tizimlarda yaxlitlikni ta’minlashda nechta yondashuv mavjud?", a: "2 ta", b: "3 ta", c: "4 ta", ans: 0 },
+    { q: "SQL Server MBda UPDATE buyrug‘i vazifasi nima?", a: "Yangi jadval yaratish", b: "Ma'lumotlarni o'chirish", c: "Ma’lumotlarni yangilash huquqi", ans: 2 },
+    { q: "Ma’lumotlar bazasi serveri modeli (PDA-model rivoji) nima?", a: "Faqat fayllarni saqlash", b: "Qoidalar va muolajalar serverning o‘zida saqlanadi va bajariladi", c: "Mijozning kompyuterida hisoblash", ans: 1 },
+    { q: "Taqsimlangan tizimlarda yaxlitlikni ta’minlashda nechta yondashuv mavjud?", a: "3 ta", b: "4 ta", c: "2 ta", ans: 2 },
     { q: "SQL Serverdagi “processadmin” roli vazifasi nima?", a: "Serverda ishlayotgan jarayonlarni yakunlash huquqi", b: "Yangi jarayon yaratish", c: "Ma'lumotlarni chop etish", ans: 0 },
-    { q: "MBBT arxitekturasi nechta sathga bo‘linadi?", a: "2 ta", b: "3 ta (infologik, datalogik va fizik)", c: "4 ta", ans: 1 },
-    { q: "Ob’ektlardan takroran foydalanish xavfsizligi texnologiyalari nechta guruhga bo‘linadi?", a: "3 ta", b: "2 ta", c: "5 ta", ans: 0 },
-    { q: "Mandatli himoya nima?", a: "Ko‘p darajali mantiqiy himoya", b: "Faqat parolli himoya", c: "Fizik himoya", ans: 0 },
+    { q: "MBBT arxitekturasi nechta sathga bo‘linadi?", a: "3 ta (infologik, datalogik va fizik)", b: "2 ta", c: "4 ta", ans: 0 },
+    { q: "Ob’ektlardan takroran foydalanish xavfsizligi texnologiyalari nechta guruhga bo‘linadi?", a: "2 ta", b: "3 ta", c: "5 ta", ans: 1 },
+    { q: "Mandatli himoya nima?", a: "Faqat parolli himoya", b: "Fizik himoya", c: "Ko‘p darajali mantiqiy himoya", ans: 2 },
     { q: "SQL Serverda “db_datawriter” roli vazifasi?", a: "Faqat o'qish", b: "Ma’lumotlarni qo‘shish, o‘chirish yoki o‘zgartirish", c: "Baza yaratish", ans: 1 },
-    { q: "Autentifikatsiya nima?", a: "Haqiqiylikni tekshirish muolajasi", b: "Ma'lumotlarni nusxalash", c: "Xatolarni tuzatish", ans: 0 },
-    { q: "Public roli nima?", a: "MBdagi barcha foydalanuvchilarning standart guruhi", b: "Faqat administratorlar guruhi", c: "Tashqi hakerlar guruhi", ans: 0 },
+    { q: "Autentifikatsiya nima?", a: "Ma'lumotlarni nusxalash", b: "Haqiqiylikni tekshirish muolajasi", c: "Xatolarni tuzatish", ans: 1 },
+    { q: "Public roli nima?", a: "Faqat administratorlar guruhi", b: "Tashqi hakerlar guruhi", c: "MBdagi barcha foydalanuvchilarning standart guruhi", ans: 2 },
     { q: "UNION so‘rovi SQL inyeksiyasi nima?", a: "UNION ALL SELECT orqali amalga oshiriladigan klassik SQL inyeksiya", b: "Ma'lumotlarni birlashtirish buyrug'i", c: "Bazani o'chirish usuli", ans: 0 },
-    { q: "Amaliyotda eng ko‘p qo‘llaniladigan MB turi?", a: "Iyerarxik MB", b: "Tarmoqli MB", c: "Relyatsion ma’lumotlar bazasi", ans: 2 },
-    { q: "Foydalanishni boshqarishda ma’lumot, resurs, jarayon nima?", a: "Subyekt", b: "Obyekt", c: "Vakolat", ans: 1 },
-    { q: "Asosiy kalitni tiklash so‘rovi?", a: "RESTORE MASTER KEY", b: "RECOVER KEY", c: "GET BACK KEY", ans: 0 },
+    { q: "Amaliyotda eng ko‘p qo‘llaniladigan MB turi?", a: "Iyerarxik MB", b: "Relyatsion ma’lumotlar bazasi", c: "Tarmoqli MB", ans: 1 },
+    { q: "Foydalanishni boshqarishda ma’lumot, resurs, jarayon nima?", a: "Obyekt", b: "Subyekt", c: "Vakolat", ans: 0 },
+    { q: "Asosiy kalitni tiklash so‘rovi?", a: "RECOVER KEY", b: "GET BACK KEY", c: "RESTORE MASTER KEY", ans: 2 },
     { q: "Servis dasturlar nima?", a: "Operatsion tizim yadrosi", b: "Foydalanuvchilarga qo‘shimcha xizmat ko‘rsatuvchi dasturlar", c: "Faqat SQL skriptlar", ans: 1 },
     { q: "To‘liq nusxalash (Full backup) nima?", a: "Barcha ma’lumotlarning to‘liq va butun nusxasini olish", b: "Faqat bir qismni nusxalash", c: "Tizim sozalamalarini nusxalash", ans: 0 },
-    { q: "Ma’lumotlar modeli tarkibiy qismlari?", a: "Rang, shakl va hajm", b: "Strukturali, yaxlitli, manipulyatsion", c: "Lokal va global qismlar", ans: 1 },
-    { q: "Bell-LaPadula modelida cheklashlar soni?", a: "2 ta", b: "4 ta", c: "6 ta", ans: 0 },
-    { q: "Asosiy kalitni o‘zgartirish buyrug‘i?", a: "CHANGE KEY", b: "UPDATE KEY", c: "ALTER MASTER KEY", ans: 2 },
+    { q: "Ma’lumotlar modeli tarkibiy qismlari?", a: "Rang, shakl va hajm", b: "Lokal va global qismlar", c: "Strukturali, yaxlitli, manipulyatsion", ans: 2 },
+    { q: "Bell-LaPadula modelida cheklashlar soni?", a: "4 ta", b: "2 ta", c: "6 ta", ans: 1 },
+    { q: "Asosiy kalitni o‘zgartirish buyrug‘i?", a: "CHANGE KEY", b: "ALTER MASTER KEY", c: "UPDATE KEY", ans: 1 },
     { q: "db_accessadmin roli vazifasi?", a: "MBga kirish huquqlarini boshqarish", b: "Baza yaratish", c: "Serverni o'chirib yoqish", ans: 0 },
-    { q: "Xavfsizlik siyosati nima?", a: "Axborotni himoyalash qoidalari majmui", b: "Antivirus sozlamasi", c: "Dasturlash tili", ans: 0 },
-    { q: "MBBT himoya profili nima?", a: "Foydalanuvchi rasmi", b: "MB xavfsizlik talablarini belgilovchi profil", c: "Baza hajmi haqida ma'lumot", ans: 1 },
-    { q: "Axborot xavfsizligining asosiy jihatlari?", a: "Konfidentsiallik, butunlik, foydalanuvchanlik", b: "Tezlik, xotira, dizayn", c: "Rasm, ovoz va matn", ans: 0 },
+    { q: "Xavfsizlik siyosati nima?", a: "Antivirus sozlamasi", b: "Axborotni himoyalash qoidalari majmui", c: "Dasturlash tili", ans: 1 },
+    { q: "MBBT himoya profili nima?", a: "MB xavfsizlik talablarini belgilovchi profil", b: "Foydalanuvchi rasmi", c: "Baza hajmi haqida ma'lumot", ans: 0 },
+    { q: "Axborot xavfsizligining asosiy jihatlari?", a: "Tezlik, xotira, dizayn", b: "Konfidentsiallik, butunlik, foydalanuvchanlik", c: "Rasm, ovoz va matn", ans: 1 },
     { q: "Oracle 12c xavfsizlik nazorati turlari?", a: "Profilaktik, tekshiruv, administratorlik", b: "Ichki va tashqi", c: "Oddiy va maxfiy", ans: 0 },
-    { q: "GRANT buyrug‘i vazifasi?", a: "Huquqni bekor qilish", b: "Foydalanuvchilarga huquq berish", c: "Baza yaratish", ans: 1 },
-    { q: "EXECUTE buyrug‘i vazifasi?", a: "Protsedura va funksiyalarni bajarish", b: "Dasturni o'chirish", c: "Serverni formatlash", ans: 0 },
-    { q: "SELECT imtiyozi nima?", a: "Ma'lumot qo'shish", b: "Jadvaldan so‘rov bajarish (o'qish)", c: "Jadvalni o'chirish", ans: 1 },
+    { q: "GRANT buyrug‘i vazifasi?", a: "Huquqni bekor qilish", b: "Baza yaratish", c: "Foydalanuvchilarga huquq berish", ans: 2 },
+    { q: "EXECUTE buyrug‘i vazifasi?", a: "Dasturni o'chirish", b: "Protsedura va funksiyalarni bajarish", c: "Serverni formatlash", ans: 1 },
+    { q: "SELECT imtiyozi nima?", a: "Jadvaldan so‘rov bajarish (o'qish)", b: "Ma'lumot qo'shish", c: "Jadvalni o'chirish", ans: 0 },
     { q: "Replikatsiya texnologiyasi nima?", a: "Ma’lumotlarni nusxalash va sinxronlash", b: "Ma'lumotlarni arxivlash", c: "MBBTni o'chirish", ans: 0 },
-    { q: "Havij dasturi vazifasi?", a: "SQL hujumlarni avtomatlashtirish", b: "Antivirus", c: "Brauzer", ans: 0 },
-    { q: "sysadmin roli nima?", a: "Serverdagi barcha huquqlar", b: "Faqat mehmon huquqi", c: "Xavfsizlik xodimi", ans: 0 },
+    { q: "Havij dasturi vazifasi?", a: "Antivirus", b: "SQL hujumlarni avtomatlashtirish", c: "Brauzer", ans: 1 },
+    { q: "sysadmin roli nima?", a: "Faqat mehmon huquqi", b: "Xavfsizlik xodimi", c: "Serverdagi barcha huquqlar", ans: 2 },
     { q: "dbcreator roli vazifasi?", a: "MB yaratish, o‘chirish va tiklash", b: "Foydalanuvchi yaratish", c: "Parolni o'zgartirish", ans: 0 },
-    { q: "Ma’lumotlar bazasi tushunchasi?", a: "Tartiblangan axborotlar to‘plami", b: "Kompyuter xotirasi", c: "Dastur kodi", ans: 0 },
+    { q: "Ma’lumotlar bazasi tushunchasi?", a: "Kompyuter xotirasi", b: "Tartiblangan axborotlar to‘plami", c: "Dastur kodi", ans: 1 },
     { q: "Xavfsizlik domeni nima?", a: "Cheklangan subyekt va obyektlar guruhi", b: "Internet sayt nomi", c: "IP manzil", ans: 0 },
-    { q: "Obyektli imtiyozlar nimani anglatadi?", a: "Jadval va obyekt huquqlari", b: "Server apparat huquqlari", c: "Global sozlamalar", ans: 0 },
-    { q: "CREATE DATABASE ENCRYPTION KEY vazifasi?", a: "Shifrlash kalitini yaratish", b: "Bazani ochish", c: "Login yaratish", ans: 0 },
+    { q: "Obyektli imtiyozlar nimani anglatadi?", a: "Server apparat huquqlari", b: "Global sozlamalar", c: "Jadval va obyekt huquqlari", ans: 2 },
+    { q: "CREATE DATABASE ENCRYPTION KEY vazifasi?", a: "Bazani ochish", b: "Shifrlash kalitini yaratish", c: "Login yaratish", ans: 1 },
     { q: "Mijoz–server modeli nima?", a: "Server va mijozga asoslangan arxitektura", b: "Faqat bitta kompyuter", c: "Offline model", ans: 0 },
-    { q: "Ma’lumotlarning fizik modeli?", a: "Saqlash tuzilmasi", b: "Mantiqiy bog'liqlik", c: "Chizmalar", ans: 0 },
-    { q: "Ma’lumotlarning infologik modeli?", a: "Mantiqiy tuzilma", b: "Kabel tizimi", c: "Elektron sxema", ans: 0 },
-    { q: "Foydalanuvchi vakolat darajasi?", a: "Subject privilege", b: "Object level", c: "Admin root", ans: 0 },
+    { q: "Ma’lumotlarning fizik modeli?", a: "Mantiqiy bog'liqlik", b: "Saqlash tuzilmasi", c: "Chizmalar", ans: 1 },
+    { q: "Ma’lumotlarning infologik modeli?", a: "Kabel tizimi", b: "Mantiqiy tuzilma", c: "Elektron sxema", ans: 1 },
+    { q: "Foydalanuvchi vakolat darajasi?", a: "Admin root", b: "Object level", c: "Subject privilege", ans: 2 },
     { q: "Relyatsion MB afzalligi?", a: "Markazlashgan nazorat", b: "Tartibsizlik", c: "Faqat matn saqlash", ans: 0 },
-    { q: "Standartlash nima?", a: "Qoidalarni belgilash faoliyati", b: "Uskunani ta'mirlash", c: "Dastur yozish", ans: 0 },
-    { q: "Guruh nima?", a: "Foydalanuvchilar to‘plami", b: "Serverlar tarmog'i", c: "Fayllar guruhi", ans: 0 },
+    { q: "Standartlash nima?", a: "Uskunani ta'mirlash", b: "Qoidalarni belgilash faoliyati", c: "Dastur yozish", ans: 1 },
+    { q: "Guruh nima?", a: "Serverlar tarmog'i", b: "Fayllar guruhi", c: "Foydalanuvchilar to‘plami", ans: 2 },
     { q: "Profilaktik nazorat nima?", a: "Xavfning oldini olish", b: "Xatoni topish", c: "Natijani e'lon qilish", ans: 0 },
-    { q: "Subyekt nima?", a: "Faol ishtirokchi (foydalanuvchi/jarayon)", b: "Passiv resurs", c: "Baza nomi", ans: 0 },
-    { q: "Obyekt nima?", a: "Himoyalanuvchi resurs", b: "Xaker", c: "Sichqoncha", ans: 0 },
+    { q: "Subyekt nima?", a: "Passiv resurs", b: "Faol ishtirokchi (foydalanuvchi/jarayon)", c: "Baza nomi", ans: 1 },
+    { q: "Obyekt nima?", a: "Xaker", b: "Sichqoncha", c: "Himoyalanuvchi resurs", ans: 2 },
     { q: "Rezerv nusxalash turlari?", a: "Full, differentsial, inkremental", b: "Rangli va oq-qora", c: "Ichki va tashqi", ans: 0 },
-    { q: "Axborot butunligi nima?", a: "Ma’lumot o‘zgarmasligi", b: "Ma'lumot yashirinligi", c: "Ma'lumot tezligi", ans: 0 },
+    { q: "Axborot butunligi nima?", a: "Ma'lumot yashirinligi", b: "Ma’lumot o‘zgarmasligi", c: "Ma'lumot tezligi", ans: 1 },
     { q: "Konfidentsiallik nima?", a: "Maxfiylik", b: "Ochiqlik", c: "Ishonchlilik", ans: 0 },
     { q: "MBBT nima?", a: "Ma’lumotlar bazasini boshqarish tizimi", b: "Matn muharriri", c: "Antivirus", ans: 0 },
-    { q: "Auditning maqsadi?", a: "Xavfsizlikni baholash", b: "Ma'lumotni buzish", c: "Dasturni sotish", ans: 0 },
-    { q: "IETF nima?", a: "Internet texnologiyalari bo‘yicha tematik guruh", b: "Dasturchilar klubi", c: "Xalqaro standart", ans: 0 },
+    { q: "Auditning maqsadi?", a: "Ma'lumotni buzish", b: "Xavfsizlikni baholash", c: "Dasturni sotish", ans: 1 },
+    { q: "IETF nima?", a: "Dasturchilar klubi", b: "Xalqaro standart", c: "Internet texnologiyalari bo‘yicha tematik guruh", ans: 2 },
     { q: "Zahiradan nusxalash nima?", a: "Muhim ma’lumotlarni saqlash (Backup)", b: "Ma'lumotni o'chirish", c: "Bazani formatlash", ans: 0 },
-    { q: "Fayl serveri modeli nima?", a: "Eng sodda mijoz-server modeli", b: "Murakkab bulutli model", c: "Kabel orqali uzatish", ans: 0 },
-    { q: "Replika nima?", a: "Ma’lumotlar bazasi nusxasi", b: "Baza nomi", c: "Original ma'luomt", ans: 0 },
-    { q: "Kirishni cheklash modeli nimadan iborat?", a: "Kirish subyekti, obyekti va qoidalar", b: "Faqat paroldan", c: "Monitor va klaviaturadan", ans: 0 },
+    { q: "Fayl serveri modeli nima?", a: "Murakkab bulutli model", b: "Eng sodda mijoz-server modeli", c: "Kabel orqali uzatish", ans: 1 },
+    { q: "Replika nima?", a: "Baza nomi", b: "Ma’lumotlar bazasi nusxasi", c: "Original ma'luomt", ans: 1 },
+    { q: "Kirishni cheklash modeli nimadan iborat?", a: "Faqat paroldan", b: "Monitor va klaviaturadan", c: "Kirish subyekti, obyekti va qoidalar", ans: 2 },
     { q: "Bell-LaPadula modeli nima?", a: "Ko‘p darajali kirishni boshqarish modeli", b: "Baza yaratish modeli", c: "Fizik model", ans: 0 },
-    { q: "Oxirgi foydalanuvchilar kim?", a: "MB bilan bevosita ishlovchilar", b: "Administratorlar", c: "Dasturchilar", ans: 0 },
-    { q: "Audit turlari?", a: "Ichki audit va tashqi audit", b: "Katta va kichik", c: "Ochiq va yopiq", ans: 0 },
+    { q: "Oxirgi foydalanuvchilar kim?", a: "Administratorlar", b: "MB bilan bevosita ishlovchilar", c: "Dasturchilar", ans: 1 },
+    { q: "Audit turlari qaysilar?", a: "Katta va kichik", b: "Ichki audit va tashqi audit", c: "Ochiq va yopiq", ans: 1 },
     { q: "Taqsimlangan MBBT nima?", a: "Taqsimlangan MBni boshqaruvchi tizim", b: "Lokal tizim", c: "Faqat oflayn tizim", ans: 0 },
-    { q: "Axborot tizimi auditi nechta qismdan iborat?", a: "3 qism", b: "2 qism", c: "5 qism", ans: 0 },
+    { q: "Axborot tizimi auditi nechta qismdan iborat?", a: "2 qism", b: "5 qism", c: "3 qism", ans: 2 },
     { q: "O‘chirilgan ma’lumotlarni yig‘ish modeli?", a: "Axborotni qayta tiklash modeli", b: "Arxivlash", c: "O'chirish rejimi", ans: 0 },
-    { q: "Rolli siyosatda boshqarish bosqichlari?", a: "4 bosqich", b: "2 bosqich", c: "6 bosqich", ans: 0 },
-    { q: "SQL inyeksiya sinflari nechta?", a: "3 ta", b: "5 ta", c: "2 ta", ans: 0 },
+    { q: "Rolli siyosatda boshqarish bosqichlari?", a: "2 bosqich", b: "4 bosqich", c: "6 bosqich", ans: 1 },
+    { q: "SQL inyeksiya sinflari nechta?", a: "5 ta", b: "2 ta", c: "3 ta", ans: 2 },
     { q: "MB nimadan himoyalanadi?", a: "Ruxsatsiz kirish, buzilish, yo‘qotishdan", b: "Faqat suvdan", c: "Faqat o'g'rilardan", ans: 0 },
-    { q: "REVOKE buyrug‘i vazifasi?", a: "Huquqni bekor qilish", b: "Huquq berish", c: "Login o'chirish", ans: 0 },
-    { q: "Past jadallikdagi texnologiya?", a: "Replikatsiya", b: "Tezkor so'rov", c: "Kesh", ans: 0 },
+    { q: "REVOKE buyrug‘i vazifasi?", a: "Huquq berish", b: "Huquqni bekor qilish", c: "Login o'chirish", ans: 1 },
+    { q: "Past jadallikdagi texnologiya?", a: "Tezkor so'rov", b: "Replikatsiya", c: "Kesh", ans: 1 },
     { q: "MB boshqarish turlari?", a: "Ichki va tashqi", b: "Ochiq va yopiq", c: "Oddiy va maxsus", ans: 0 },
-    { q: "Tranzaksiya ta’rifi?", a: "Amallar ketma-ketligi", b: "Xatoliklar hisoboti", c: "Baza arxivi", ans: 0 },
-    { q: "Rolli model nimani anglatadi?", a: "Huquq rollar orqali beriladi", b: "Har bir kishi admin", c: "Parolsiz kirish", ans: 0 },
-    { q: "MB xavfsizligi nimani ta’minlaydi?", a: "Axborot butunligi va maxfiyligi", b: "Tezkor internet", c: "Chiroyli dizayn", ans: 0 },
+    { q: "Tranzaksiya ta’rifi?", a: "Xatoliklar hisoboti", b: "Baza arxivi", c: "Amallar ketma-ketligi", ans: 2 },
+    { q: "Rolli model nimani anglatadi?", a: "Har bir kishi admin", b: "Huquq rollar orqali beriladi", c: "Parolsiz kirish", ans: 1 },
+    { q: "MB xavfsizligi nimani ta’minlaydi?", a: "Tezkor internet", b: "Chiroyli dizayn", c: "Axborot butunligi va maxfiyligi", ans: 2 },
     { q: "Differentsial nusxalash nima?", a: "Oxirgi to‘liq nusxadan keyin o‘zgargan axborotni saqlash", b: "Har doim to'liq nusxa olish", c: "Baza strukturasini nusxalash", ans: 0 },
-    { q: "Administratorlik nazorati nima?", a: "Boshqaruv choralari", b: "Faqat kuzatish", c: "Hisobot yozish", ans: 0 },
+    { q: "Administratorlik nazorati nima?", a: "Faqat kuzatish", b: "Boshqaruv choralari", c: "Hisobot yozish", ans: 1 },
     { q: "Tekshiruv nazorati nima?", a: "Nazorat va audit qilish", b: "Ruxsat berish", c: "Taqiqlash", ans: 0 },
     { q: "SQL Server INSERT nimani bajarmaydi?", a: "Huquq bermaydi", b: "Ma'lumot qo'shmaydi", c: "Xatoni topmaydi", ans: 0 },
-    { q: "INSERT operatori qanday imtiyoz beradi?", a: "Jadvalga yangi qator qo'shish", b: "Jadvalni o'chirish", c: "Login yaratish", ans: 0 },
-    { q: "Privilege (Vakolat) nima?", a: "Himoyalangan ma’lumotlar ustida muolaja bajarish huquqi", b: "Foydalanuvchi ismi", c: "Server raqami", ans: 0 },
-    { q: "Datalogik model nima?", a: "MBBT sathlaridan biri", b: "Faqat rasmlar modeli", c: "Elektron sxema", ans: 0 },
-    { q: "Ma'lumotlar xavfsizligi nima?", a: "Ma’lumotlarni kutilgan/kutilmagan xavfdan, yo‘qotishdan himoyalash", b: "Faqat parolni yashirish", c: "Internetni o'chirib qo'yish", ans: 0 },
+    { q: "INSERT operatori qanday imtiyoz beradi?", a: "Jadvalni o'chirish", b: "Jadvalga yangi qator qo'shish", c: "Login yaratish", ans: 1 },
+    { q: "Privilege (Vakolat) nima?", a: "Foydalanuvchi ismi", b: "Server raqami", c: "Himoyalangan ma’lumotlar ustida muolaja bajarish huquqi", ans: 2 },
+    { q: "Datalogik model nima?", a: "Faqat rasmlar modeli", b: "MBBT sathlaridan biri", c: "Elektron sxema", ans: 1 },
+    { q: "Ma'lumotlar xavfsizligi nima?", a: "Faqat parolni yashirish", b: "Internetni o'chirib qo'yish", c: "Ma’lumotlarni kutilgan/kutilmagan xavfdan, yo‘qotishdan himoyalash", ans: 2 },
     { q: "Ruxsatli foydalanish nima?", a: "Qoidalarni buzmasdan foydalanish", b: "Hakerlik hujumi", c: "Parolni buzib kirish", ans: 0 },
-    { q: "Ma’lumotlar bazasi tili nima?", a: "MBni yaratish, yuritish va qo‘llash uchun sun’iy til", b: "Ingliz tili", c: "Java kodi", ans: 0 },
-    { q: "ORACLE MBBTda rol (role) nima?", a: "Imtiyozlar majmuasi (nabori)", b: "Administrator ismi", c: "Baza joylashgan manzil", ans: 0 },
+    { q: "Ma’lumotlar bazasi tili nima?", a: "Ingliz tili", b: "MBni yaratish, yuritish va qo‘llash uchun sun’iy til", c: "Java kodi", ans: 1 },
+    { q: "ORACLE MBBTda rol (role) nima?", a: "Administrator ismi", b: "Baza joylashgan manzil", c: "Imtiyozlar majmuasi (nabori)", ans: 2 },
     { q: "Iyerarxik model ta’rifi qaysi MBga tegishli?", a: "Iyerarxik ma’lumotlar bazasiga", b: "Relyatsion bazaga", c: "Fayllar tizimiga", ans: 0 },
-    { q: "SQL Serverda “db_accessadmin” vazifasi?", a: "Loginlarni MBga kirish huquqlarini qo‘shish yoki olib tashlash", b: "Bazani formatlash", c: "Parolni shifrlash", ans: 0 },
+    { q: "SQL Serverda “db_accessadmin” vazifasi?", a: "Bazani formatlash", b: "Loginlarni MBga kirish huquqlarini qo‘shish yoki olib tashlash", c: "Parolni shifrlash", ans: 1 },
     { q: "Foydalanish subyekti nima?", a: "Foydalanishni cheklash qoidalari bilan aniqlanuvchi shaxs", b: "Baza ichidagi jadval", c: "Server korpusi", ans: 0 },
-    { q: "Ma'lumotlar bazasi auditi nima?", a: "Axborot xavfsizligini baholash jarayoni", b: "Maoshlarni hisoblash", c: "Soliq tekshiruvi", ans: 0 },
-    { q: "Taqsimlangan MBBTning asosiy vazifasi?", a: "Taqsimlangan MBni boshqarish va foydalanuvchiga shaffoflikni ta’minlash", b: "Ma'lumotlarni o'chirish", c: "Faqat bitta serverda ishlash", ans: 0 },
-    { q: "SQL Server foydalanuvchi rejimlariga nima kirmaydi?", a: "Faqat mobil rejim", b: "Standart", c: "Integratsiyalangan", ans: 0 },
+    { q: "Ma'lumotlar bazasi auditi nima?", a: "Maoshlarni hisoblash", b: "Axborot xavfsizligini baholash jarayoni", c: "Soliq tekshiruvi", ans: 1 },
+    { q: "Taqsimlangan MBBTning asosiy vazifasi?", a: "Ma'lumotlarni o'chirish", b: "Faqat bitta serverda ishlash", c: "Taqsimlangan MBni boshqarish va foydalanuvchiga shaffoflikni ta’minlash", ans: 2 },
+    { q: "SQL Server foydalanuvchi rejimlariga nima kirmaydi?", a: "Standart", b: "Integratsiyalangan", c: "Faqat mobil rejim", ans: 2 },
     { q: "Bell-LaPadula modelida nechta asosiy cheklash bor?", a: "2 ta", b: "5 ta", c: "10 ta", ans: 0 },
     { q: "Audit turlari qaysilar?", a: "Ichki va tashqi audit", b: "Katta va kichik", c: "Ochiq va yopiq", ans: 0 },
-    { q: "Ma'lumotlar bazasi tushunchasi?", a: "Tartibli axborotlar to'plami", b: "Qog'ozlar yig'indisi", c: "Tasodifiy raqamlar", ans: 0 }
+    { q: "Ma'lumotlar bazasi tushunchasi?", a: "Qog'ozlar yig'indisi", b: "Tartibli axborotlar to'plami", c: "Tasodifiy raqamlar", ans: 1 }
 ];
 
 let userScore = 0;
@@ -155,7 +155,7 @@ let answeredCount = 0;
 
 function renderQuiz() {
     const container = document.getElementById('questions-container');
-    quizData.forEach((item, index) => {
+    rawData.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'q-card';
         card.id = `q-${index}`;
@@ -172,7 +172,7 @@ function renderQuiz() {
 function checkAnswer(qIdx, selected, btn) {
     const card = document.getElementById(`q-${qIdx}`);
     const btns = card.querySelectorAll('.opt-btn');
-    const correct = quizData[qIdx].ans;
+    const correct = rawData[qIdx].ans;
 
     btns.forEach((b, i) => {
         b.classList.add('disabled');
@@ -188,14 +188,14 @@ function checkAnswer(qIdx, selected, btn) {
 }
 
 function calculateResult() {
-    if (answeredCount < quizData.length) {
-        if (!confirm("Hali hamma savolga javob bermadingiz (" + answeredCount + "/100). Baribir yakunlaysizmi?")) return;
+    if (answeredCount < rawData.length) {
+        if (!confirm("Barcha savollarga javob bermadingiz. Yakunlaysizmi?")) return;
     }
     document.getElementById('quiz-ui').style.display = 'none';
     document.getElementById('res-box').style.display = 'block';
-    document.getElementById('score-display').innerText = `${userScore} / ${quizData.length}`;
-    const percent = Math.round((userScore / quizData.length) * 100);
-    document.getElementById('percent-display').innerText = `To'g'ri javoblar ko'rsatkichi: ${percent}%`;
+    document.getElementById('score-display').innerText = userScore + " / 100";
+    const percent = Math.round((userScore / rawData.length) * 100);
+    document.getElementById('percent-display').innerText = "Natija: " + percent + "%";
     window.scrollTo(0,0);
 }
 
